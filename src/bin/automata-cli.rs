@@ -1,4 +1,6 @@
+extern crate image;
 use rs_cellular_automata::*;
+use std::path::PathBuf;
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -20,6 +22,10 @@ struct Opt {
     /// When undefined, print all steps.
     #[structopt(long = "last")]
     last: Option<usize>,
+    /// When defined, output is saved as a PNG image in the named file
+    /// When undefined, output is displayed as text in stdout
+    #[structopt(short = "o", long = "output", parse(from_os_str))]
+    output: Option<PathBuf>,
 }
 fn main() {
     let opt = Opt::from_args();
@@ -37,8 +43,29 @@ fn main() {
     if print_step > 0 {
         automata.step(print_step);
     }
-    for _i in print_step..opt.steps {
-        println!("{}", automata.as_text());
-        automata.step(1);
+    if let Some(image_file) = opt.output {
+        let mut image_buf = Vec::new();
+        for _i in print_step..opt.steps {
+            image_buf.extend(
+                automata
+                    .iter()
+                    .map(|c| if c == 0 { 255u8 } else { 0u8 })
+                    .collect::<Vec<_>>(),
+            );
+            automata.step(1);
+        }
+        image::save_buffer(
+            image_file,
+            &image_buf,
+            opt.view_width as u32,
+            (opt.steps - print_step) as u32,
+            image::ColorType::L8,
+        )
+        .unwrap();
+    } else {
+        for _i in print_step..opt.steps {
+            println!("{}", automata.as_text());
+            automata.step(1);
+        }
     }
 }

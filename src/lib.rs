@@ -13,7 +13,7 @@ impl Rule1D {
     }
     pub fn apply(&self, cells: &[u8]) -> u8 {
         assert_eq!(cells.len(), 3);
-        let idx = ((cells[2] as usize) << 2) + ((cells[1] as usize) << 1) + (cells[0] as usize);
+        let idx = ((cells[0] as usize) << 2) + ((cells[1] as usize) << 1) + (cells[2] as usize);
         *self.outputs.get(idx).unwrap()
     }
 }
@@ -111,7 +111,7 @@ mod tests {
         assert_eq!(rule.apply(&vec![0, 1, 1]), 0);
         let rule = Rule1D::from_int(2);
         assert_eq!(rule.apply(&vec![0, 0, 0]), 0);
-        assert_eq!(rule.apply(&vec![1, 0, 0]), 1);
+        assert_eq!(rule.apply(&vec![0, 0, 1]), 1);
         assert_eq!(rule.apply(&vec![0, 1, 0]), 0);
     }
     #[test]
