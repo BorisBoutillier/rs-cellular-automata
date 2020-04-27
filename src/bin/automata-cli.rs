@@ -44,24 +44,10 @@ fn main() {
         automata.step(print_step);
     }
     if let Some(image_file) = opt.output {
-        let mut image_buf = Vec::new();
-        for _i in print_step..opt.steps {
-            image_buf.extend(
-                automata
-                    .iter()
-                    .map(|c| if c == 0 { 255u8 } else { 0u8 })
-                    .collect::<Vec<_>>(),
-            );
-            automata.step(1);
-        }
-        image::save_buffer(
-            image_file,
-            &image_buf,
-            opt.view_width as u32,
-            (opt.steps - print_step) as u32,
-            image::ColorType::L8,
-        )
-        .unwrap();
+        let image_buffer = automata.as_image_buffer(opt.steps - print_step);
+        image_buffer
+            .save_with_format(image_file, image::ImageFormat::Png)
+            .unwrap();
     } else {
         for _i in print_step..opt.steps {
             println!("{}", automata.as_text());

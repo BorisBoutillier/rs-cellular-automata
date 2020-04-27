@@ -1,3 +1,4 @@
+use image::RgbImage;
 #[derive(Debug)]
 pub struct Rule1D {
     outputs: Vec<u8>,
@@ -18,6 +19,8 @@ impl Rule1D {
     }
 }
 
+const BLACK: [u8; 3] = [0u8, 0u8, 0u8];
+const WHITE: [u8; 3] = [255u8, 255u8, 255u8];
 pub struct Automata1DIter<'a> {
     automata: &'a Automata1D,
     idx: i64,
@@ -64,15 +67,6 @@ impl Automata1D {
             view_cell_start: -3,
         }
     }
-    pub fn as_text(&self) -> String {
-        format!(
-            "|{}|",
-            self.iter()
-                .map(|c| if c == 0 { " " } else { "*" })
-                .collect::<Vec<_>>()
-                .join("")
-        )
-    }
     pub fn iter(&self) -> Automata1DIter {
         Automata1DIter {
             automata: &self,
@@ -93,6 +87,35 @@ impl Automata1D {
             self.step += 1;
             self.view_cell_start -= 1;
         }
+    }
+    pub fn as_text(&self) -> String {
+        format!(
+            "|{}|",
+            self.iter()
+                .map(|c| if c == 0 { " " } else { "*" })
+                .collect::<Vec<_>>()
+                .join("")
+        )
+    }
+    pub fn as_image_buffer(&mut self, n_step: usize) -> RgbImage {
+        let mut buf = Vec::new();
+        for i in 0..(n_step + 1) {
+            buf.extend(
+                self.iter()
+                    .flat_map(|c| {
+                        if c == 0 {
+                            WHITE.to_vec()
+                        } else {
+                            BLACK.to_vec()
+                        }
+                    })
+                    .collect::<Vec<_>>(),
+            );
+            if i != n_step {
+                self.step(1)
+            }
+        }
+        RgbImage::from_raw(self.view_width as u32, (n_step + 1) as u32, buf).unwrap()
     }
 }
 
