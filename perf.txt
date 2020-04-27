@@ -1,0 +1,7 @@
+plugged-in
+time ./target/release/automata-cli --rule 30 --steps 100000 --last 10
+1m23
+
+unplugged
+time ./target/release/automata-cli --rule 30 --steps 30000 --last 10
+7.6s

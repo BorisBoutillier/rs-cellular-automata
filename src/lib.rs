@@ -18,6 +18,32 @@ impl Rule1D {
     }
 }
 
+pub struct Automata1DIter<'a> {
+    automata: &'a Automata1D,
+    idx: i64,
+}
+impl<'a> Iterator for Automata1DIter<'a> {
+    type Item = u8;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.idx += 1;
+        assert!(self.idx >= self.automata.view_start);
+        if self.idx >= self.automata.view_start + self.automata.view_width as i64 {
+            None
+        } else if self.idx < self.automata.view_cell_start {
+            Some(*self.automata.cells.first().unwrap())
+        } else if self.idx < self.automata.view_cell_start + self.automata.cells.len() as i64 {
+            Some(
+                *self
+                    .automata
+                    .cells
+                    .get((self.idx - self.automata.view_cell_start) as usize)
+                    .unwrap(),
+            )
+        } else {
+            Some(*self.automata.cells.last().unwrap())
+        }
+    }
+}
 pub struct Automata1D {
     rule: Rule1D,
     step: usize,
@@ -39,21 +65,19 @@ impl Automata1D {
         }
     }
     pub fn as_text(&self) -> String {
-        let mut text = Vec::new();
-        for idx in self.view_start..(self.view_start + self.view_width as i64) {
-            let cell = self
-                .cells
-                .get((idx - self.view_cell_start) as usize)
-                .unwrap_or(self.cells.first().unwrap());
-            if *cell == 0u8 {
-                text.push(" ");
-            } else {
-                text.push("*");
-            }
+        format!(
+            "|{}|",
+            self.iter()
+                .map(|c| if c == 0 { " " } else { "*" })
+                .collect::<Vec<_>>()
+                .join("")
+        )
+    }
+    pub fn iter(&self) -> Automata1DIter {
+        Automata1DIter {
+            automata: &self,
+            idx: self.view_start - 1,
         }
-        let text = text.join("");
-        assert_eq!(text.len(), self.view_width);
-        format!("|{}|", text)
     }
     pub fn step(&mut self) {
         let mut pattern = Vec::new();
@@ -120,5 +144,24 @@ mod tests {
             automata.step();
             assert_eq!(automata.as_text(), "|***********|");
         }
+    }
+    #[test]
+    fn automata_1d_iter_works() {
+        // Rule 254 create black cell whenever any cell was black
+        let rule = Rule1D::from_int(254);
+        let mut automata = Automata1D::new(rule, -5, 11);
+        assert_eq!(
+            automata.iter().collect::<Vec<_>>(),
+            vec![0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+        );
+        assert_eq!(
+            automata.iter().collect::<Vec<_>>(),
+            vec![0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+        );
+        automata.step();
+        assert_eq!(
+            automata.iter().collect::<Vec<_>>(),
+            vec![0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0]
+        );
     }
 }
