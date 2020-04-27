@@ -34,10 +34,11 @@ fn main() {
         _ => 0,
     };
     let mut automata = Automata1D::new(rule, view_start, opt.view_width);
-    for i in 0..opt.steps {
-        if i >= print_step {
-            println!("{}", automata.as_text());
-        }
-        automata.step();
+    if print_step > 0 {
+        automata.step(print_step);
+    }
+    for _i in print_step..opt.steps {
+        println!("{}", automata.as_text());
+        automata.step(1);
     }
 }

@@ -79,29 +79,20 @@ impl Automata1D {
             idx: self.view_start - 1,
         }
     }
-    pub fn step(&mut self) {
-        let mut pattern = Vec::new();
-        let mut new_cells = Vec::new();
-        for &cell in self.cells.iter() {
-            pattern.push(cell);
-            if pattern.len() < 3 {
-                continue;
-            } else if pattern.len() == 4 {
-                pattern.remove(0);
+    pub fn step(&mut self, n_step: usize) {
+        self.cells.reserve(2 * n_step);
+        for _j in 0..n_step {
+            let cur_len = self.cells.len();
+            for i in 0..cur_len - 2 {
+                *self.cells.get_mut(i).unwrap() = self.rule.apply(&self.cells[i..i + 3]);
             }
-            new_cells.push(self.rule.apply(&pattern));
+            *self.cells.get_mut(cur_len - 2).unwrap() = self.cells[cur_len - 3];
+            *self.cells.get_mut(cur_len - 1).unwrap() = self.cells[cur_len - 3];
+            self.cells.insert(0, self.cells[0]);
+            self.cells.insert(0, self.cells[0]);
+            self.step += 1;
+            self.view_cell_start -= 1;
         }
-        assert_eq!(new_cells.len(), self.cells.len() - 2);
-        let first = *new_cells.first().unwrap();
-        let last = *new_cells.last().unwrap();
-        new_cells.insert(0, first);
-        new_cells.insert(0, first);
-        new_cells.push(last);
-        new_cells.push(last);
-        assert_eq!(new_cells.len(), self.cells.len() + 2);
-        self.cells = new_cells;
-        self.step += 1;
-        self.view_cell_start -= 1;
     }
 }
 
@@ -130,19 +121,33 @@ mod tests {
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(automata.step, 0);
         assert_eq!(automata.as_text(), "|     *     |");
-        automata.step();
+        automata.step(1);
         assert_eq!(automata.as_text(), "|    ***    |");
-        automata.step();
+        automata.step(1);
         assert_eq!(automata.as_text(), "|   *****   |");
-        automata.step();
+        automata.step(1);
         assert_eq!(automata.as_text(), "|  *******  |");
-        automata.step();
+        automata.step(1);
         assert_eq!(automata.as_text(), "| ********* |");
-        automata.step();
+        automata.step(1);
         assert_eq!(automata.as_text(), "|***********|");
         for _i in 0..10 {
-            automata.step();
+            automata.step(1);
             assert_eq!(automata.as_text(), "|***********|");
+        }
+    }
+    #[test]
+    fn automata_1d_edges() {
+        // Rule 1: All black-> white, other->white
+        let rule = Rule1D::from_int(127);
+        let mut automata = Automata1D::new(rule, -5, 11);
+        assert_eq!(automata.step, 0);
+        assert_eq!(automata.as_text(), "|     *     |");
+        for _i in 0..10 {
+            automata.step(1);
+            assert_eq!(automata.as_text(), "|***********|");
+            automata.step(1);
+            assert_eq!(automata.as_text(), "|           |");
         }
     }
     #[test]
@@ -158,7 +163,7 @@ mod tests {
             automata.iter().collect::<Vec<_>>(),
             vec![0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
         );
-        automata.step();
+        automata.step(1);
         assert_eq!(
             automata.iter().collect::<Vec<_>>(),
             vec![0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0]
