@@ -1,4 +1,3 @@
-extern crate image;
 use rs_cellular_automata::*;
 use std::path::PathBuf;
 use structopt::StructOpt;
