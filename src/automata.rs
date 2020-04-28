@@ -3,18 +3,18 @@ use image::RgbImage;
 
 pub struct Automata1DIter<'a, T: Rules1D> {
     automata: &'a Automata1D<T>,
-    idx: i64,
+    idx: i32,
 }
 impl<'a, T: Rules1D> Iterator for Automata1DIter<'a, T> {
     type Item = u8;
     fn next(&mut self) -> Option<Self::Item> {
         self.idx += 1;
         assert!(self.idx >= self.automata.view_start);
-        if self.idx >= self.automata.view_start + self.automata.view_width as i64 {
+        if self.idx >= self.automata.view_start + self.automata.view_width as i32 {
             None
         } else if self.idx < self.automata.view_cell_start {
             Some(*self.automata.cells.first().unwrap())
-        } else if self.idx < self.automata.view_cell_start + self.automata.cells.len() as i64 {
+        } else if self.idx < self.automata.view_cell_start + self.automata.cells.len() as i32 {
             Some(
                 *self
                     .automata
@@ -29,14 +29,14 @@ impl<'a, T: Rules1D> Iterator for Automata1DIter<'a, T> {
 }
 pub struct Automata1D<T: Rules1D> {
     rule: T,
-    step: usize,
+    step: u32,
     cells: Vec<u8>,
-    view_start: i64,
-    view_width: usize,
-    view_cell_start: i64,
+    view_start: i32,
+    view_width: u32,
+    view_cell_start: i32,
 }
 impl<T: Rules1D> Automata1D<T> {
-    pub fn new(rule: T, view_start: i64, view_width: usize) -> Automata1D<T> {
+    pub fn new(rule: T, view_start: i32, view_width: u32) -> Automata1D<T> {
         let cells = rule.initialize();
         Automata1D {
             rule,
@@ -53,8 +53,8 @@ impl<T: Rules1D> Automata1D<T> {
             idx: self.view_start - 1,
         }
     }
-    pub fn step(&mut self, n_step: usize) {
-        self.cells.reserve(2 * n_step);
+    pub fn step(&mut self, n_step: u32) {
+        self.cells.reserve(2 * n_step as usize);
         for _j in 0..n_step {
             let cur_len = self.cells.len();
             for i in 0..cur_len - 2 {
@@ -77,7 +77,7 @@ impl<T: Rules1D> Automata1D<T> {
                 .join("")
         )
     }
-    pub fn as_image_buffer(&mut self, n_step: usize) -> RgbImage {
+    pub fn as_image_buffer(&mut self, n_step: u32) -> RgbImage {
         let mut buf = Vec::new();
         for i in 0..(n_step + 1) {
             buf.extend(
@@ -89,7 +89,7 @@ impl<T: Rules1D> Automata1D<T> {
                 self.step(1)
             }
         }
-        RgbImage::from_raw(self.view_width as u32, (n_step + 1) as u32, buf).unwrap()
+        RgbImage::from_raw(self.view_width, n_step + 1, buf).unwrap()
     }
 }
 
