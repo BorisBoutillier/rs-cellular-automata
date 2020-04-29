@@ -1,3 +1,4 @@
+use rand::{thread_rng, Rng};
 use rs_cellular_automata::*;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -6,7 +7,7 @@ use structopt::StructOpt;
 struct Opt {
     /// Define the rule number that the cellular automata will follow, represend as an integer
     #[structopt(short = "r", long = "rule")]
-    rule: u32,
+    rule: Option<u32>,
     /// Define the number of step to iterate on the cellular automata
     #[structopt(short = "s", long = "steps")]
     steps: u32,
@@ -27,9 +28,14 @@ struct Opt {
     output: Option<PathBuf>,
 }
 fn main() {
+    let mut rng = thread_rng();
     let opt = Opt::from_args();
 
-    let rule = Rule1D::from_int(opt.rule);
+    let rule_nb = match opt.rule {
+        Some(v) => v,
+        _ => rng.gen_range(0, 81 * 729),
+    };
+    let rule = Rule1D3Color::from_int(rule_nb);
     let view_start = match opt.view_start {
         Some(v) => v,
         _ => -(opt.view_width as i32) / 2,
@@ -53,4 +59,5 @@ fn main() {
             automata.step(1);
         }
     }
+    println!("Rule: {}", rule_nb)
 }

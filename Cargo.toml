@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 structopt = "0.3"
 image = "0.23.4"
+rand = "0.7.3"
