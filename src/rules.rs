@@ -3,6 +3,11 @@ pub trait Rules1D {
     fn apply(&self, cells: &[u8]) -> u8;
     fn cell_to_rgb_vec(&self, cell: &u8) -> Vec<u8>;
     fn cell_to_text(&self, cell: &u8) -> String;
+
+    fn cell_to_rgb(&self, cell: &u8) -> (u8, u8, u8) {
+        let v = self.cell_to_rgb_vec(cell);
+        (v[0], v[1], v[2])
+    }
 }
 
 const BLACK: [u8; 3] = [0u8, 0u8, 0u8];

@@ -1,4 +1,5 @@
 use crate::rules::*;
+use gdk_pixbuf::{Colorspace, Pixbuf};
 use image::RgbImage;
 
 pub struct Automata1DIter<'a, T: Rules1D> {
@@ -90,6 +91,27 @@ impl<T: Rules1D> Automata1D<T> {
             }
         }
         RgbImage::from_raw(self.view_width, n_step + 1, buf).unwrap()
+    }
+    pub fn as_pixbuf(&mut self, n_step: u32) -> Pixbuf {
+        let pixbuf = Pixbuf::new(
+            Colorspace::Rgb,
+            false,
+            8,
+            self.view_width as i32,
+            n_step as i32,
+        )
+        .expect("Cannot create the Pixbuf!");
+        pixbuf.fill(0xFFFFFFFF);
+        for i in 0..(n_step) {
+            for (j, cell) in self.iter().enumerate() {
+                let (r, g, b) = self.rule.cell_to_rgb(&cell);
+                pixbuf.put_pixel(j as i32, i as i32, r, g, b, 0);
+            }
+            if i != n_step - 1 {
+                self.step(1)
+            }
+        }
+        pixbuf
     }
 }
 

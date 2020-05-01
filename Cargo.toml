@@ -10,3 +10,10 @@ edition = "2018"
 structopt = "0.3"
 image = "0.23.4"
 rand = "0.7.3"
+gio = "0.8.1"
+gdk-pixbuf = "0.8.0"
+glib = "0.9.3"
+
+[dependencies.gtk]
+version = "0.8.1"
+features = ["v3_24"]
