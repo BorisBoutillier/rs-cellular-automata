@@ -1,7 +1,8 @@
 # Cellular automata
-This is a simple Rust library with associated command-line executable to play with 1-dimension cellular automata.
+This is a simple Rust library to play with 1-dimension cellular automata, 2 Colors, 3 Colors.
+It has both a command line interface and a gtk-based GUI
 
-## Examples
+## CLI
 ### text output in the terminal
 ```sh
 automata-cli --rule 30 --steps=10 --width=20
