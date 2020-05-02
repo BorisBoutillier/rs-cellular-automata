@@ -259,20 +259,17 @@ fn build_ui(app: &gtk::Application, model: Arc<Mutex<AutomataModel>>) {
 
                 }
                 Message::DrawStripe(row,width,height,rgb_vec) => {
-                    let lcl_pixbuf = Pixbuf::new( Colorspace::Rgb, false, 8, width, height)
-                    .expect("Cannot create the Pixbuf!");
-                    for (i,&(r,g,b)) in rgb_vec.iter().enumerate() {
-                        let x = (i as i32)%width;
-                        let y = (i as i32)/width;
-                        lcl_pixbuf.put_pixel(x, y, r, g, b, 0);
-                    }
                     let pixbuf = display_img.get_pixbuf().unwrap();
                     let mut real_row = row; 
                     if row+height>pixbuf.get_height() {
                         pixbuf.copy_area(0,height,width,pixbuf.get_height()-height,&pixbuf,0,0);
                         real_row =  pixbuf.get_height()-height;
                     }
-                    lcl_pixbuf.copy_area(0, 0, width, height, &pixbuf, 0, real_row);
+                    for (i,&(r,g,b)) in rgb_vec.iter().enumerate() {
+                        let x = (i as i32)%width;
+                        let y = (i as i32)/width+real_row;
+                        pixbuf.put_pixel(x, y, r, g, b, 0);
+                    }
                     display_img.set_from_pixbuf(Some(&pixbuf));
                     display_img.queue_draw();
 
