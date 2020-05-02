@@ -1,5 +1,4 @@
 use crate::rules::*;
-use gdk_pixbuf::{Colorspace, Pixbuf};
 use image::RgbImage;
 
 pub struct Automata1DIter<'a, T: Rules1D> {
@@ -10,7 +9,6 @@ impl<'a, T: Rules1D> Iterator for Automata1DIter<'a, T> {
     type Item = u8;
     fn next(&mut self) -> Option<Self::Item> {
         self.idx += 1;
-        assert!(self.idx >= self.automata.view_start);
         if self.idx >= self.automata.view_start + self.automata.view_width as i32 {
             None
         } else if self.idx < self.automata.view_cell_start {
@@ -69,6 +67,9 @@ impl<T: Rules1D> Automata1D<T> {
             self.view_cell_start -= 1;
         }
     }
+    pub fn cells_len(&self) -> usize {
+        self.cells.len()
+    }
     pub fn as_text(&self) -> String {
         format!(
             "|{}|",
@@ -92,26 +93,19 @@ impl<T: Rules1D> Automata1D<T> {
         }
         RgbImage::from_raw(self.view_width, n_step + 1, buf).unwrap()
     }
-    pub fn as_pixbuf(&mut self, n_step: u32) -> Pixbuf {
-        let pixbuf = Pixbuf::new(
-            Colorspace::Rgb,
-            false,
-            8,
-            self.view_width as i32,
-            n_step as i32,
-        )
-        .expect("Cannot create the Pixbuf!");
-        pixbuf.fill(0xFFFFFFFF);
-        for i in 0..(n_step) {
-            for (j, cell) in self.iter().enumerate() {
-                let (r, g, b) = self.rule.cell_to_rgb(&cell);
-                pixbuf.put_pixel(j as i32, i as i32, r, g, b, 0);
-            }
+    pub fn as_rgb_vec(&mut self, n_step: u32) -> Vec<(u8, u8, u8)> {
+        let mut buf = Vec::new();
+        for i in 0..n_step {
+            buf.extend(
+                self.iter()
+                    .map(|c| self.rule.cell_to_rgb(&c))
+                    .collect::<Vec<_>>(),
+            );
             if i != n_step - 1 {
                 self.step(1)
             }
         }
-        pixbuf
+        buf
     }
 }
 
@@ -121,14 +115,14 @@ mod tests {
 
     #[test]
     fn rule_1d_works() {
-        let rule = Rule1D::from_int(0);
+        let rule = Rule1D2Color::from_int(0);
         assert_eq!(rule.apply(&vec![1, 1, 0]), 0);
-        let rule = Rule1D::from_int(1);
+        let rule = Rule1D2Color::from_int(1);
         println!("Rule 1 {:?}", rule);
         assert_eq!(rule.apply(&vec![0, 0, 0]), 1);
         assert_eq!(rule.apply(&vec![1, 0, 0]), 0);
         assert_eq!(rule.apply(&vec![0, 1, 1]), 0);
-        let rule = Rule1D::from_int(2);
+        let rule = Rule1D2Color::from_int(2);
         assert_eq!(rule.apply(&vec![0, 0, 0]), 0);
         assert_eq!(rule.apply(&vec![0, 0, 1]), 1);
         assert_eq!(rule.apply(&vec![0, 1, 0]), 0);
@@ -136,7 +130,7 @@ mod tests {
     #[test]
     fn automata_1d_works() {
         // Rule 254 create black cell whenever any cell was black
-        let rule = Rule1D::from_int(254);
+        let rule = Rule1D2Color::from_int(254);
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(automata.step, 0);
         assert_eq!(automata.as_text(), "|     *     |");
@@ -158,7 +152,7 @@ mod tests {
     #[test]
     fn automata_1d_edges() {
         // Rule 1: All black-> white, other->white
-        let rule = Rule1D::from_int(127);
+        let rule = Rule1D2Color::from_int(127);
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(automata.step, 0);
         assert_eq!(automata.as_text(), "|     *     |");
@@ -172,7 +166,7 @@ mod tests {
     #[test]
     fn automata_1d_iter_works() {
         // Rule 254 create black cell whenever any cell was black
-        let rule = Rule1D::from_int(254);
+        let rule = Rule1D2Color::from_int(254);
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(
             automata.iter().collect::<Vec<_>>(),

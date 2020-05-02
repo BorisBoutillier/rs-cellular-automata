@@ -1,0 +1,8 @@
+## gtk
+Handle some errors :
+    . Deleted entries
+    . Non-even heights
+Add Step label, updated by automata.
+Add support for choice of number of colors
+Add support for 4 colors totalistics.
+Add rule configuration view
