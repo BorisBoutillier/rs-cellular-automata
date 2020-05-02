@@ -39,6 +39,8 @@ fn build_ui(app: &gtk::Application) {
     let rule_rand_btn: gtk::Button = builder.get_object("rule_rand_btn").unwrap();
     let display_img: gtk::Image = builder.get_object("display_img").unwrap();
     let play_btn: gtk::Button = builder.get_object("play_btn").unwrap();
+    let save_btn: gtk::Button = builder.get_object("save_btn").unwrap();
+    let save_dlg: gtk::FileChooserDialog = builder.get_object("save_file_dlg").unwrap();
 
     let pixbuf =
         Pixbuf::new(Colorspace::Rgb, false, 8, 1600, 800).expect("Cannot create the Pixbuf!");
@@ -53,6 +55,22 @@ fn build_ui(app: &gtk::Application) {
         let rule_id = rng.gen_range(0, 81 * 729);
         rule_nb_entry.set_text(&rule_id.to_string());
         pixbuf.fill(rule_id);
+    }));
+    save_btn.connect_clicked(clone!(@weak rule_nb_entry,@weak display_img => move |_| {
+        save_dlg.show();
+        let rule_nb = rule_nb_entry
+            .get_text()
+            .unwrap()
+            .as_str()
+            .parse::<u32>()
+            .unwrap();
+        save_dlg.set_current_name(format!("3C_{}.png",rule_nb));
+        if save_dlg.run() == gtk::ResponseType::Ok {
+            if let Some(filename) = save_dlg.get_filename() {
+                display_img.get_pixbuf().unwrap().savev(filename,"png",&[]).unwrap();
+            }
+        }
+        save_dlg.hide();
     }));
     //clone!(@weak counter_label => |X|
     play_btn.connect_clicked(clone!(@weak rule_nb_entry => move |_| {
@@ -73,7 +91,7 @@ fn build_ui(app: &gtk::Application) {
             .unwrap()
             .as_str()
             .parse::<u32>()
-            .unwrap_or(1600);
+            .unwrap();
         let rule = Rule1D3Color::from_int(rule_nb);
         let mut automata = Automata1D::new(rule, -(width as i32) / 2, width as u32);
         let pixbuf = automata.as_pixbuf(height);
