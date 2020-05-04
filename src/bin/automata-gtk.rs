@@ -13,8 +13,8 @@ use std::time::Duration;
 use std::sync::{Arc, Mutex};
 
 enum Message {
-    UpdatePlayButton(bool),                             // is_playing
-    ResetDrawing(i32, i32),                             // width, height
+    UpdatePlayButton(bool),                       // is_playing
+    ResetDrawing(i32, i32),                       // width, height
     DrawStripe(i32, i32, i32, Vec<(u8, u8, u8)>), // row, width, height, rbg_vec
 }
 
@@ -279,5 +279,8 @@ fn build_ui(app: &gtk::Application, model: Arc<Mutex<AutomataModel>>) {
         }),
     );
     //continuous_chk.set_active(false);
+    //width_entry.set_text("11");
+    //height_entry.set_text("5");
+    //rule_nb_entry.set_text("30");
     window.show_all();
 }

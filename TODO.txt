@@ -1,15 +1,7 @@
-## Bugs
-1. gtk width is strange
-2. cli rule 30 is strange
-## Common
-1. Add support for choice of number of colors
-2. Add support for 4 colors totalistics.
 ## gtk
 3. Handle some errors :
     . Deleted entries
     . Non-even heights
 4. Add Step label, updated by automata.
-5. Check if automata_model could be merged Automata itself.
+5. Simplify automata_model could be merged Automata itself.
 6. Add rule configuration view
-## cli
-7. Update to support 1 and 2

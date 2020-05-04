@@ -81,7 +81,7 @@ impl Automata1D {
     }
     pub fn as_image_buffer(&mut self, n_step: u32) -> RgbImage {
         let mut buf = Vec::new();
-        for i in 0..(n_step + 1) {
+        for _i in 0..n_step {
             buf.extend(
                 self.iter()
                     .flat_map(|c| {
@@ -90,23 +90,19 @@ impl Automata1D {
                     })
                     .collect::<Vec<_>>(),
             );
-            if i != n_step {
-                self.step(1)
-            }
+            self.step(1)
         }
-        RgbImage::from_raw(self.view_width, n_step + 1, buf).unwrap()
+        RgbImage::from_raw(self.view_width, n_step, buf).unwrap()
     }
     pub fn as_rgb_vec(&mut self, n_step: u32) -> Vec<(u8, u8, u8)> {
         let mut buf = Vec::new();
-        for i in 0..n_step {
+        for _i in 0..n_step {
             buf.extend(
                 self.iter()
                     .map(|c| self.rule.cell_to_rgb(&c))
                     .collect::<Vec<_>>(),
             );
-            if i != n_step - 1 {
-                self.step(1)
-            }
+            self.step(1)
         }
         buf
     }
