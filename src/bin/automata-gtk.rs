@@ -19,8 +19,8 @@ enum Message {
 }
 
 struct AutomataModel {
-    automata: Automata1D<Rule1D3Color>,
-    rule_nb: u32,
+    automata: Automata1D,
+    rule_nb: u64,
     width: i32,
     height: i32,
     continuous: bool,
@@ -31,10 +31,10 @@ struct AutomataModel {
 }
 impl AutomataModel {
     fn new() -> AutomataModel {
-        let rule_nb = 40327u32;
+        let rule_nb = 40327u64;
         let width = 1600i32;
         let height = 800i32;
-        let rule = Rule1D3Color::from_int(rule_nb);
+        let rule = Rule1D::new(3,rule_nb);
         let automata = Automata1D::new(rule, -width / 2, width as u32);
         AutomataModel {
             automata,
@@ -111,10 +111,10 @@ impl AutomataModel {
             .unwrap();
     }
     fn reset_automata(&mut self) {
-        let rule = Rule1D3Color::from_int(self.rule_nb);
+        let rule = Rule1D::new(3,self.rule_nb);
         self.automata = Automata1D::new(rule, -self.width / 2, self.width as u32);
     }
-    fn set_rule_nb(&mut self, rule_nb: u32) -> u32 {
+    fn set_rule_nb(&mut self, rule_nb: u64) -> u64 {
         if rule_nb != self.rule_nb {
             self.rule_nb = rule_nb;
             self.clean = false;
@@ -191,7 +191,7 @@ fn build_ui(app: &gtk::Application, model: Arc<Mutex<AutomataModel>>) {
     rule_nb_entry.connect_changed(clone!(@weak model => move |entry| {
         let text = filter_integer(&entry);
         let mut m = model.lock().unwrap();
-        let nb = (*m).set_rule_nb(text.parse::<u32>().unwrap());
+        let nb = (*m).set_rule_nb(text.parse::<u64>().unwrap());
         entry.set_text(&nb.to_string());
     }));
     height_entry.connect_changed(clone!(@weak model => move |entry| {

@@ -1,11 +1,11 @@
 use crate::rules::*;
 use image::RgbImage;
 
-pub struct Automata1DIter<'a, T: Rules1D> {
-    automata: &'a Automata1D<T>,
+pub struct Automata1DIter<'a> {
+    automata: &'a Automata1D,
     idx: i32,
 }
-impl<'a, T: Rules1D> Iterator for Automata1DIter<'a, T> {
+impl<'a> Iterator for Automata1DIter<'a> {
     type Item = u8;
     fn next(&mut self) -> Option<Self::Item> {
         self.idx += 1;
@@ -26,16 +26,16 @@ impl<'a, T: Rules1D> Iterator for Automata1DIter<'a, T> {
         }
     }
 }
-pub struct Automata1D<T: Rules1D> {
-    rule: T,
+pub struct Automata1D {
+    rule: Rule1D,
     step: u32,
     cells: Vec<u8>,
     view_start: i32,
     view_width: u32,
     view_cell_start: i32,
 }
-impl<T: Rules1D> Automata1D<T> {
-    pub fn new(rule: T, view_start: i32, view_width: u32) -> Automata1D<T> {
+impl Automata1D {
+    pub fn new(rule: Rule1D, view_start: i32, view_width: u32) -> Automata1D {
         let cells = rule.initialize();
         Automata1D {
             rule,
@@ -46,7 +46,7 @@ impl<T: Rules1D> Automata1D<T> {
             view_cell_start: -3,
         }
     }
-    pub fn iter(&self) -> Automata1DIter<T> {
+    pub fn iter(&self) -> Automata1DIter {
         Automata1DIter {
             automata: &self,
             idx: self.view_start - 1,
@@ -84,7 +84,10 @@ impl<T: Rules1D> Automata1D<T> {
         for i in 0..(n_step + 1) {
             buf.extend(
                 self.iter()
-                    .flat_map(|c| self.rule.cell_to_rgb_vec(&c))
+                    .flat_map(|c| {
+                        let (r, g, b) = self.rule.cell_to_rgb(&c);
+                        vec![r, g, b]
+                    })
                     .collect::<Vec<_>>(),
             );
             if i != n_step {
@@ -114,23 +117,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn rule_1d_works() {
-        let rule = Rule1D2Color::from_int(0);
-        assert_eq!(rule.apply(&vec![1, 1, 0]), 0);
-        let rule = Rule1D2Color::from_int(1);
-        println!("Rule 1 {:?}", rule);
-        assert_eq!(rule.apply(&vec![0, 0, 0]), 1);
-        assert_eq!(rule.apply(&vec![1, 0, 0]), 0);
-        assert_eq!(rule.apply(&vec![0, 1, 1]), 0);
-        let rule = Rule1D2Color::from_int(2);
-        assert_eq!(rule.apply(&vec![0, 0, 0]), 0);
-        assert_eq!(rule.apply(&vec![0, 0, 1]), 1);
-        assert_eq!(rule.apply(&vec![0, 1, 0]), 0);
-    }
-    #[test]
     fn automata_1d_works() {
         // Rule 254 create black cell whenever any cell was black
-        let rule = Rule1D2Color::from_int(254);
+        let rule = Rule1D::new(2, 254);
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(automata.step, 0);
         assert_eq!(automata.as_text(), "|     *     |");
@@ -149,10 +138,27 @@ mod tests {
             assert_eq!(automata.as_text(), "|***********|");
         }
     }
+
+    #[test]
+    fn automata2c_30_works() {
+        // Rule 254 create black cell whenever any cell was black
+        let rule = Rule1D::new(2, 30);
+        let mut automata = Automata1D::new(rule, -5, 11);
+        assert_eq!(automata.step, 0);
+        assert_eq!(automata.as_text(), "|     *     |");
+        automata.step(1);
+        assert_eq!(automata.as_text(), "|    ***    |");
+        automata.step(1);
+        assert_eq!(automata.as_text(), "|   **  *   |");
+        automata.step(1);
+        assert_eq!(automata.as_text(), "|  ** ****  |");
+        automata.step(1);
+        assert_eq!(automata.as_text(), "| **  *   * |");
+    }
     #[test]
     fn automata_1d_edges() {
         // Rule 1: All black-> white, other->white
-        let rule = Rule1D2Color::from_int(127);
+        let rule = Rule1D::new(2, 127);
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(automata.step, 0);
         assert_eq!(automata.as_text(), "|     *     |");
@@ -166,7 +172,7 @@ mod tests {
     #[test]
     fn automata_1d_iter_works() {
         // Rule 254 create black cell whenever any cell was black
-        let rule = Rule1D2Color::from_int(254);
+        let rule = Rule1D::new(2, 254);
         let mut automata = Automata1D::new(rule, -5, 11);
         assert_eq!(
             automata.iter().collect::<Vec<_>>(),

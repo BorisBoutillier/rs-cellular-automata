@@ -5,9 +5,17 @@ use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Opt {
+    /// Define the rule number of colors in the automata, 2,3 or 4 is supported
+    #[structopt(
+        short = "c",
+        long = "colors",
+        default_value = "2",
+        possible_values(&["2", "3", "4"])
+    )]
+    colors: u8,
     /// Define the rule number that the cellular automata will follow, represend as an integer
     #[structopt(short = "r", long = "rule")]
-    rule: Option<u32>,
+    rule: Option<u64>,
     /// Define the number of step to iterate on the cellular automata
     #[structopt(short = "s", long = "steps")]
     steps: u32,
@@ -33,15 +41,15 @@ fn main() {
 
     let rule_nb = match opt.rule {
         Some(v) => v,
-        _ => rng.gen_range(0, 81 * 729),
+        _ => rng.gen_range(0, Rule1D::get_max_nb(opt.colors)),
     };
-    let rule = Rule1D3Color::from_int(rule_nb);
+    let rule = Rule1D::new(opt.colors, rule_nb);
     let view_start = match opt.view_start {
         Some(v) => v,
         _ => -(opt.view_width as i32) / 2,
     };
     let print_step = match opt.last {
-        Some(v) => opt.steps - v,
+        Some(v) if v <= opt.steps => opt.steps - v,
         _ => 0,
     };
     let mut automata = Automata1D::new(rule, view_start, opt.view_width);
