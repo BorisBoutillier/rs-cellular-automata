@@ -1,7 +1,4 @@
 ## gtk
-3. Handle some errors :
-    . Deleted entries
-    . Non-even heights
-4. Add Step label, updated by automata.
-5. Simplify automata_model could be merged Automata itself.
-6. Add rule configuration view
+. Simplify automata_model could be merged Automata itself.
+. Add rule configuration view
+. Add support fo zoom and panning

@@ -15,7 +15,7 @@ impl Rule1D {
     pub fn new(n_colors: u8, rule_nb: u64) -> Rule1D {
         assert!(vec![2, 3, 4].contains(&n_colors));
         let rule_nb_max = Rule1D::get_max_nb(n_colors);
-        if rule_nb >= rule_nb_max {
+        if rule_nb > rule_nb_max {
             panic!("The provide rule_nb {} is incompatible with {} colors. Maximum for this number of colors is {}"
                 ,rule_nb,n_colors,rule_nb_max);
         }
@@ -49,12 +49,13 @@ impl Rule1D {
         }
         Rule1D { n_colors, outputs }
     }
+    // Return the inclusive maximum rule number supported for the provided number of colors as 'n_colors'
     pub fn get_max_nb(n_colors: u8) -> u64 {
         assert!(vec![2, 3, 4].contains(&n_colors));
         match n_colors {
-            2 => 256,
-            3 => 59049,
-            _ => 1048576,
+            2 => 255,
+            3 => 59048,
+            _ => 1048575,
         }
     }
     pub fn initialize(&self) -> Vec<u8> {

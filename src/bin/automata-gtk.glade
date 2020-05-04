@@ -32,6 +32,23 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-save-as</property>
   </object>
+  <object class="GtkListStore" id="n_colors_list">
+    <columns>
+      <!-- column-name n_colors -->
+      <column type="guint"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">2</col>
+      </row>
+      <row>
+        <col id="0">3</col>
+      </row>
+      <row>
+        <col id="0">4</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkWindow" id="application_window">
     <property name="can_focus">False</property>
     <child type="titlebar">
@@ -48,6 +65,37 @@
             <property name="can_focus">False</property>
             <property name="spacing">5</property>
             <child>
+              <object class="GtkLabel" id="colors_lbl">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Nb colors:</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkComboBox" id="n_colors_combo">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="model">n_colors_list</property>
+                <property name="active">0</property>
+                <child>
+                  <object class="GtkCellRendererText"/>
+                  <attributes>
+                    <attribute name="text">0</attribute>
+                  </attributes>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -57,7 +105,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -65,12 +113,11 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="width_chars">10</property>
-                <property name="text" translatable="yes">3</property>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -84,7 +131,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -183,8 +230,8 @@
                   <object class="GtkEntry" id="width_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="max_length">6</property>
                     <property name="width_chars">5</property>
-                    <property name="text" translatable="yes">1600</property>
                     <property name="input_purpose">digits</property>
                   </object>
                   <packing>
@@ -209,8 +256,8 @@
                   <object class="GtkEntry" id="height_entry">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="max_length">5</property>
                     <property name="width_chars">5</property>
-                    <property name="text" translatable="yes">800</property>
                     <property name="input_purpose">digits</property>
                   </object>
                   <packing>
@@ -232,6 +279,43 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="step_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">Step</property>
+                    <property name="justify">right</property>
+                    <property name="width_chars">7</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="step_nb_label">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label" translatable="yes">0</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">7</property>
                   </packing>
                 </child>
               </object>

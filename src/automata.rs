@@ -67,6 +67,10 @@ impl Automata1D {
             self.view_cell_start -= 1;
         }
     }
+    #[inline]
+    pub fn get_cur_step(&self) -> u32 {
+        self.step
+    }
     pub fn cells_len(&self) -> usize {
         self.cells.len()
     }
