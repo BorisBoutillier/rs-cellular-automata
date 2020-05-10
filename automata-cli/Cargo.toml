@@ -1,0 +1,11 @@
+[package]
+name = "automata-cli"
+version = "0.1.0"
+authors = ["Boris Boutillier <boris.boutillier@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+automata-lib = { path = "../automata-lib" }
+structopt = "0.3"
+rand = "0.7.3"
+image = "0.23.4"

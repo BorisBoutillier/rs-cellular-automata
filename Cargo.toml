@@ -1,19 +1,7 @@
-[package]
-name = "rs-cellular-automata"
-version = "0.1.0"
-authors = ["Boris Boutillier <boris.boutillier@gmail.com>"]
-edition = "2018"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-structopt = "0.3"
-image = "0.23.4"
-rand = "0.7.3"
-gio = "0.8.1"
-gdk-pixbuf = "0.8.0"
-glib = "0.9.3"
-
-[dependencies.gtk]
-version = "0.8.1"
-features = ["v3_24"]
+members = [
+    'automata-lib',
+    'automata-cli',
+    'automata-gtk',
+]

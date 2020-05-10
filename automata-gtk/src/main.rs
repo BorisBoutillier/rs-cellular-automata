@@ -1,12 +1,12 @@
 extern crate gio;
 extern crate gtk;
 
+use automata_lib::*;
 use gdk_pixbuf::{Colorspace, Pixbuf};
 use gio::prelude::*;
 use glib::clone;
 use gtk::prelude::*;
 use rand::{thread_rng, Rng};
-use rs_cellular_automata::*;
 use std::env;
 use std::sync::{Arc, Mutex};
 use std::thread;

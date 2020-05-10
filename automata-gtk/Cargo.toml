@@ -1,0 +1,16 @@
+[package]
+name = "automata-gtk"
+version = "0.1.0"
+authors = ["Boris Boutillier <boris.boutillier@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+automata-lib = { path = "../automata-lib" }
+rand = "0.7.3"
+gio = "0.8.1"
+gdk-pixbuf = "0.8.0"
+glib = "0.9.3"
+
+[dependencies.gtk]
+version = "0.8.1"
+features = ["v3_24"]

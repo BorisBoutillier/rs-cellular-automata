@@ -1,5 +1,7 @@
+extern crate automata_lib;
+
 use rand::{thread_rng, Rng};
-use rs_cellular_automata::*;
+use automata_lib::*;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
