@@ -1,4 +1,4 @@
 ## gtk
-. Simplify automata_model could be merged Automata itself.
-. Add rule configuration view
-. Add support fo zoom and panning
+. Add support for zoom and panning
+## wasm
+. Add support for zomm and panning
