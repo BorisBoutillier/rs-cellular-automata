@@ -4,4 +4,5 @@ members = [
     'automata-lib',
     'automata-cli',
     'automata-gtk',
+    'automata-wasm',
 ]

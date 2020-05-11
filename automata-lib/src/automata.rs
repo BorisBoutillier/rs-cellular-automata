@@ -110,6 +110,14 @@ impl Automata1D {
         }
         buf
     }
+    pub fn as_vec(&mut self, n_step: u32) -> Vec<u8> {
+        let mut buf = Vec::new();
+        for _i in 0..n_step {
+            buf.extend(self.iter().collect::<Vec<_>>());
+            self.step(1)
+        }
+        buf
+    }
 }
 
 #[cfg(test)]

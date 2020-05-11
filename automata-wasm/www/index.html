@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Cellur automata</title>
+</head>
+
+<body>
+  <noscript>This page contains webassembly and javascript content, please enable javascript in your browser.</noscript>
+
+  <p>
+    <label for="nbColors">Nb Colors:</label>
+    <select id="nbColors">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+    </select>
+    <label for="ruleNb">Rule :</label>
+    <input type="number" size=10 id="ruleNb" value="30" min="0" />
+    <button id="random"></button>
+  </p>
+  <p>
+    <button id="play-pause"></button>
+    <label for="width">Width :</label>
+    <input type="number" id="width" min="0" size=5 />
+    <label for="height">Height :</label>
+    <input type="number" id="height" min="0" size=5 />
+    <label>Steps :</label>
+    <label id="steps">0</label>
+  </p>
+  <canvas id="automata_canvas"></canvas>
+  <script src="./bootstrap.js"></script>
+</body>
+
+</html>
