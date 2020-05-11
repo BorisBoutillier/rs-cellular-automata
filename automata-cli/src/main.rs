@@ -1,7 +1,7 @@
 extern crate automata_lib;
 
-use rand::{thread_rng, Rng};
 use automata_lib::*;
+use rand::{thread_rng, Rng};
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -11,18 +11,19 @@ struct Opt {
     #[structopt(
         short = "c",
         long = "colors",
-        default_value = "2",
+        default_value = "3",
         possible_values(&["2", "3", "4"])
     )]
     colors: u8,
     /// Define the rule number that the cellular automata will follow, represend as an integer
+    /// If not provided, a random rule will be choosen.
     #[structopt(short = "r", long = "rule")]
     rule: Option<u64>,
     /// Define the number of step to iterate on the cellular automata
-    #[structopt(short = "s", long = "steps")]
+    #[structopt(short = "s", long = "steps", default_value = "40")]
     steps: u32,
     /// Define the width of the viewed area of the cellular automata
-    #[structopt(short = "w", long = "width", default_value = "130")]
+    #[structopt(short = "w", long = "width", default_value = "80")]
     view_width: u32,
     /// Define the starting point of the viewed area, in relation to the starting black cell.
     /// When not provided, view will be centered around the starting cell
@@ -69,5 +70,5 @@ fn main() {
             automata.step(1);
         }
     }
-    println!("Rule: {}", rule_nb)
+    println!("Colors: {}, Rule: {}", opt.colors, rule_nb)
 }
